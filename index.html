@@ -87,7 +87,24 @@
     </section>
   </main>
 
+  <!-- TrackJS -->
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
   <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "287e2b5b90484085a37d565fd0b3cf64"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+
+  <script>
+    TrackJS.track('Testing TrackJS!');
+    class CalculationError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "CalculationError";
+      }
+    }
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,13 +112,165 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      // output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      try {
+        if (firstNum.trim() === '' || secondNum.trim() === '') {
+          throw new CalculationError("Both input fields must be filled.");
+        }
+        if (isNaN(firstNum) || isNaN(secondNum)) {
+          throw new CalculationError("Inputs must be numbers.");
+        }
+        if (operator === '/' && Number(secondNum) === 0) {
+          throw new CalculationError("Division by zero is not allowed.");
+        }
+        let result = eval(`${firstNum} ${operator} ${secondNum}`);
+        output.innerHTML = result;
+      } catch (err) {
+        console.error(`Caught ${err.name}: ${err.message}`);
+        output.innerHTML = `Error: ${err.message}`;
+      } finally {
+        console.log("Calculation attempted");
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+
+    // Console Log
+    errorBtns[0].addEventListener('click', () => {
+      console.log("console.log demo");
+    });
+
+    // Console Error
+    errorBtns[1].addEventListener('click', () => {
+      console.error("console.error demo");
+    });
+
+    // Console Count
+    errorBtns[2].addEventListener('click', () => {
+      console.count("console.count demo");
+    });
+
+    // Console Warn
+    errorBtns[3].addEventListener('click', () => {
+      console.warn("console.warn demo");
+    });
+
+    // Console Assert
+    errorBtns[4].addEventListener('click', () => {
+      console.assert(false, "console.assert demo");
+    });
+
+    // Console Clear
+    errorBtns[5].addEventListener('click', () => {
+      console.clear();
+    });
+
+    // Console Dir
+    errorBtns[6].addEventListener('click', () => {
+      console.dir(errorBtns[6]);
+    });
+
+    // Console dirxml
+    errorBtns[7].addEventListener('click', () => {
+      console.dirxml(errorBtns[7]);
+    });
+
+    // Console Group Start
+    errorBtns[8].addEventListener('click', () => {
+      console.group("console.group demo");
+    });
+
+    // Console Group End
+    errorBtns[9].addEventListener('click', () => {
+      console.groupEnd();
+    });
+
+    // Console Table
+    errorBtns[10].addEventListener('click', () => {
+      const data = [
+        { name: "Powell", code: 110 },
+        { name: "Aiden", code: 2025 },
+      ];
+      console.table(data);
+    });
+
+    // Start Timer
+    errorBtns[11].addEventListener('click', () => {
+      console.time("timer demo");
+    });
+
+    // End Timer
+    errorBtns[12].addEventListener('click', () => {
+      console.timeEnd("timer demo");
+    });
+
+    // Console Trace
+    errorBtns[13].addEventListener('click', () => {
+      function foo() {
+        bar();
+      }
+      function bar() {
+        console.trace("console.trace demo");
+      }
+      foo();
+    });
+
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      let output = document.querySelector('output');
+      let firstNum = document.querySelector('#first-num').value;
+      let secondNum = document.querySelector('#second-num').value;
+      let operator = document.querySelector('#operator').value;
+
+      try {
+        // Validate input
+        if (firstNum.trim() === '' || secondNum.trim() === '') {
+          throw new Error("Both input fields must be filled.");
+        }
+
+        if (isNaN(firstNum) || isNaN(secondNum)) {
+          throw new Error("Inputs must be numbers.");
+        }
+
+        if (operator === '/' && Number(secondNum) === 0) {
+          throw new Error("Division by zero is not allowed.");
+        }
+
+        // Safe evaluation
+        let result = eval(`${firstNum} ${operator} ${secondNum}`);
+        output.innerHTML = result;
+
+      } catch (err) {
+        // Custom error handling
+        console.error("Calculation Error:", err.message);
+        output.innerHTML = `Error: ${err.message}`;
+      } finally {
+        console.log("Calculation attempted");
+      }
+    });
+
+    // Trigger a Global Error
+    errorBtns[14].addEventListener('click', () => {
+      throw new Error('This is a global error');
+    });
+
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.log("A global error was caught");
+      console.log("Message:", message);
+      console.log("Source:", source);
+      console.log("Line:", lineno);
+      console.log("Column:", colno);
+      console.log("Error object:", error);
+    };
+
+
+
   </script>
 </body>
 
